@@ -24,11 +24,15 @@
     "dependencies": {
         "clean-css": "^4.1.7",
         "combined-stream": "^1.0.5",
+        "dot": "^1.1.2",
+        "ejs": "^2.5.6",
+        "html-minifier": "^3.5.3",
+        "less": "^2.7.2",
         "mkdirp": "^0.5.1",
-        "readable-stream": "^2.3.3",
+        "nunjucks": "^3.0.1",
+        "request": "^2.81.0",
+        "stylus": "^0.54.5",
         "uglify-js": "^3.0.25",
-        "less": "2.7.2",
-        "stylus": "0.54.5",
-        "request": "^2.81.0"
+        "art-template": "^4.12.1"
     }
 }
