@@ -3,15 +3,15 @@
 - [Install](#install)
 - [Config Options](#config-options)
 - [Transform](#transform)
-    - [Uglify-Complie](#uglify-complie)
-    - [CSSMini-Complie](#cssmini-complie)
-    - [HTMLMini-Complie](#htmlmini-complie)
-    - [Less-Complie](#less-complie)
-    - [Sass-Complie](#sass-complie)
-    - [Stylus-Complie](#stylus-complie)
-    - [Nunjucks-Complie](#nunjucks-complie)
-    - [Dot-Complie](#dot-complie)
-    - [ArtTemplate-Complie](#arttemplate-complie)
+  - [Uglify-Complie](#uglify-complie)
+  - [CSSMini-Complie](#cssmini-complie)
+  - [HTMLMini-Complie](#htmlmini-complie)
+  - [Less-Complie](#less-complie)
+  - [Sass-Complie](#sass-complie)
+  - [Stylus-Complie](#stylus-complie)
+  - [Nunjucks-Complie](#nunjucks-complie)
+  - [Dot-Complie](#dot-complie)
+  - [ArtTemplate-Complie](#arttemplate-complie)
 - [Hooks](#hooks)
 
 > koa2版本的静态资源、combo资源请求中间件
@@ -29,65 +29,63 @@
 ## Install
 
 ```sh
-$ npm install --save koa-combo-static
+npm install --save koa-combo-static
 ```
 
 ## Config Options
 
 1. 配置对象模式
 
- *   `root`:[`String`] 文件资源的本地根级目录(绝对路径)
- *   `charset`:[`String`] 文件编码格式 (Default: `utf-8`)
- *   `gzip`: [`Boolean`] 是否允许启动gzip压缩(Default:`false`)
- *   `maxAge`: [`Number`]  文件的最大缓存时间,单位`秒`(Default: `0`)
- *   `isweak`: [`Boolean`] 是否使用弱ETag (Default:`true`)
- *   `cacheControl`: 自定义文件的缓存控制内容,会覆盖maxAge的作用*Optional*
- *   `prefixOfStatic`:[`Array`] 静态文件资源的前缀路径 (Default: `['js','css','imgs','fonts','videos']`)
- *   `prefix`: [`Array`] 合并资源请求的前缀 (Default: [`combo_js`,`combo_css`,`combo_html`])
- *   `tag`: [`String`] combo资源请求的连接标签 (Default: `??`),
- *   `mini`: [`Boolean`] 是否允许压缩,如果为调试模式则不会执行文件资源的压缩(Default:`true`)
- *   `remoteCache`: [`Boolean`] 是否缓存远程文件至本地 (Default:`false`)
- *   `remoteMap`: [`Object`] 远程路由映射 *Optional*
+* `root`:[`String`] 文件资源的本地根级目录(绝对路径)
+* `charset`:[`String`] 文件编码格式 (Default: `utf-8`)
+* `gzip`: [`Boolean`] 是否允许启动gzip压缩(Default:`false`)
+* `maxAge`: [`Number`]  文件的最大缓存时间,单位`秒`(Default: `0`)
+* `isweak`: [`Boolean`] 是否使用弱ETag (Default:`true`)
+* `cacheControl`: 自定义文件的缓存控制内容,会覆盖maxAge的作用*Optional*
+* `prefixOfStatic`:[`Array`] 静态文件资源的前缀路径 (Default: `['js','css','imgs','fonts','videos']`)
+* `prefix`: [`Array`] 合并资源请求的前缀 (Default: [`combo_js`,`combo_css`,`combo_html`])
+* `tag`: [`String`] combo资源请求的连接标签 (Default: `??`),
+* `mini`: [`Boolean`] 是否允许压缩,如果为调试模式则不会执行文件资源的压缩(Default:`true`)
+* `remoteCache`: [`Boolean`] 是否缓存远程文件至本地 (Default:`false`)
+* `remoteMap`: [`Object`] 远程路由映射 *Optional*
+
 ```json
 {
     "cdn.js.cn":"127.0.1"
 }
 ```
- *   `dfttransform`:[`Array`] 允许使用的转换流 (Default:`["less","sass","stylus","nunjucks","dot","arttemplate","dust"]`), 模块内部默认会使用Uglify、CSSMini、HTMLMini这三个转换流
 
-2. 链式API调用
+* `dfttransform`:[`Array`] 允许使用的转换流 (Default:`["less","sass","stylus","nunjucks","dot","arttemplate","dust"]`), 模块内部默认会使用Uglify、CSSMini、HTMLMini这三个转换流
 
- *   `root()、charset()、gzip()、maxAge()、isweak()、cacheControl()、tag()、mini()、remoteCache()`: 都是一个参数值调用形式:`fn(value)`
- *   `prefix(String|Array)`
- *   `prefixOfStatic(String|Array)`
- *   `dfttransform(String|Array)`:
- *   `remoteMap(key,value)`
-        `key`:[`String`]远程地址别名 **Required**
-        `value`:[`String`]实际的远程地址 **Required**
- *   `transform(ext,transformName,transformOptions,transformFactory)`:
-        * `ext`: [`String`] 文件后缀名(含".") **Required**
-        * `transformName`: [`String`] 转换流内部定义名称或自定义名称 **Required**
-        * `transformOptions`: [`Object`] 转换流配置项 *Optional*
-        * `transformFactory`: [`Function`] 转换流构建工厂 *Optional*
- *   `hooks(prefixName,options)`:
-        * `prefixName`:[`String`] 当前路径钩子要挂在到哪个combo请求前缀的路由中**Required**
-        * `options`: [`Object`]  **Required**
-            * `dir`:[`String`] 此路径前缀访问的combo请求对应到的磁盘目录地址
-            * `allow_ext`:[`Array`] 此路径前缀访问的combo请求中可以允许出现的资源文件后缀列表 **Required**
-            * `realpath`:[`Function`] 解析每个combo文件,并得到实际文件路径(如果没有填写缓存文件,那么系统默认是在`root`路径内创建一个远程路由别名的文件夹)
-            
-Note: 
-* `prefix`配置是用于过滤是否是combo请求的第一步
-* `hooks()` API方法调用的参数`prefixName`属于[全局配置](#config-options)中的`prefix`定义的值
+1. API
+
+**transform(ext,transformName,transformOptions,transformFactory)**
+自定义转换流
+
+* `ext`: [`String`] 文件后缀名(含".") **Required**
+* `transformName`: [`String`] 转换流内部定义名称或自定义名称 **Required**
+* `transformOptions`: [`Object`] 转换流配置项 *Optional*
+* `transformFactory`: [`Function`] 转换流构建工厂 *Optional*
+
+**hooks(prefixName,options)**
+自定义路径钩子处理
+
+* `prefixName`:[`String`] 当前路径钩子要挂在到哪个combo请求前缀的路由中**Required**
+* `options`: [`Object`]  **Required**
+    * `dir`:[`String`] 此路径前缀访问的combo请求对应到的磁盘目录地址
+    * `allow_ext`:[`Array`] 此路径前缀访问的combo请求中可以允许出现的资源文件后缀列表 **Required**
+    * `realpath`:[`Function`] 解析每个combo文件,并得到实际文件路径(如果没有填写缓存文件,那么系统默认是在`root`路径内创建一个远程路由别名的文件夹)
+
+Note: `hooks()` API方法调用的参数`prefixName`属于[全局配置](#config-options)中的`prefix`定义的值
 
 ## Transform
+
 > combo资源请求中涉及到的所有转换流
 
-1. How to use `Transform`
+1. 自定义/覆盖重写 `Transform`
 
 ```js
 let kcombo = require('koa-combo-static')
-
 
 kcombo(/*options*/)
 
@@ -99,15 +97,12 @@ kcombo(/*options*/)
         //Note: opts参数 === 方法中的第三个参数
         /*return a transform Stream engine*/
     })
-
-
 ```
 
-2. Supported `Transform`
+1. 内部支持的 `Transform`
 
 Note:
 * 内部已经内置了很多转换流,一般无需过多自定义
-
 * 由于内部的转换流提供较多,故此可能出现多余现象
     1) 如果确认并不需要内部提供的大部分转换流的话:
 
@@ -124,94 +119,103 @@ Note:
 - [CSSMini-Complie](#cssmini-complie)
 - [HTMLMini-Complie](#htmlmini-complie)
 
-2. 样式处理的转换流
+1. 样式处理的转换流
 - [Less-Complie](#less-complie)
 - [Sass-Complie](#sass-complie)
 - [Stylus-Complie](#stylus-complie)
 
-3. 模板引擎处理的转换流
+1. 模板引擎处理的转换流
 - [Nunjucks-Complie](#Nunjucks-complie)
 - [Dot-Complie](#dot-complie)
 - [ArtTemplate-Complie](#arttemplate-complie)
 
-#### Uglify-Complie
+### Uglify-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save uglify-js@3.0.25
+npm i --save uglify-js
 ```
 
 · 作用 : 将js文件流内容执行压缩
 
-#### CSSMini-Complie
+### CSSMini-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save clean-css@4.1.7
+npm i --save clean-css
 ```
 
 · 作用 : 将css文件流内容执行压缩
 
-#### HTMLMini-Complie
+### HTMLMini-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save clean-css@4.1.7
+npm i --save html-minifier
 ```
 
 · 作用 : 将模板文件流内容执行压缩
 
 
-#### Less-Complie
+### Less-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save less@2.7.2
+npm i --save less
 ```
 
 · 作用 : 将.less文件流内容编译成纯css内容
 
-#### Sass-Complie
+### Sass-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save node-sass@4.5.3
+npm i --save node-sass
 ```
 
 · 作用 : 将.scss文件流内容编译成纯css内容
 
-#### Stylus-Complie
+### Stylus-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save stylus@0.54.5
+npm i --save stylus
 ```
 
 · 作用 : 将.styl文件流内容编译成纯css内容
 
-#### Nunjucks-Complie
+### Nunjucks-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save nunjucks
+npm i --save nunjucks
 ```
 
 · 作用 : 将.html或.njk文件流内容编译成纯HTML内容
 
-#### Dot-Complie
+### Dot-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save dot
+npm i --save dot
 ```
 
 · 作用 : 将.dot文件流内容编译成纯HTML内容
 
-#### ArtTemplate-Complie
+### ArtTemplate-Complie
 
 · 依赖
+
 ```sh
-$ npm i --save art-template
+npm i --save art-template
 ```
 
 · 作用 : 将.tpl文件流内容编译成纯HTML内容
@@ -236,7 +240,7 @@ combo请求的文件资源集合内的文件,有如下几种可能:
 
 针对以上情况,设立一个文件实际路径获取的钩子,这样在组件获取到combo请求并将combo请求内的每个资源执行一次钩子操作从而来得到直接的资源地址
 
-2. How
+1. How
 
 (1) 通过初始化的时候调用API`hooks()`方法来定义钩子
 
