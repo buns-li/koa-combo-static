@@ -116,7 +116,7 @@ module.exports = function (options) {
 
     if (options.hooks) {
         for (let key in options.hooks) {
-            combo.hooks(options.prefix, options.hooks[key])
+            combo.hooks(key, options.hooks[key])
         }
     }
 
