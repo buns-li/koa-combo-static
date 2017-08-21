@@ -3,15 +3,6 @@
 - [Install](#install)
 - [Config Options](#config-options)
 - [Transform](#transform)
-  - [Uglify-Complie](#uglify-complie)
-  - [CSSMini-Complie](#cssmini-complie)
-  - [HTMLMini-Complie](#htmlmini-complie)
-  - [Less-Complie](#less-complie)
-  - [Sass-Complie](#sass-complie)
-  - [Stylus-Complie](#stylus-complie)
-  - [Nunjucks-Complie](#nunjucks-complie)
-  - [Dot-Complie](#dot-complie)
-  - [ArtTemplate-Complie](#arttemplate-complie)
 - [Hooks](#hooks)
 
 > koa2版本的静态资源、combo资源请求中间件
@@ -20,11 +11,13 @@
 
 · combo资源解析
 
-· 支持远程文件资源解析
+· 支持远程文件资源解析(可落地)
 
 · 支持合并资源的本地combo请求map
 
-· 支持文件资源在线编译转换
+· 支持模板文件的在线预编译
+
+· 支持模板文件的在线html呈现
 
 ## Install
 
@@ -56,17 +49,20 @@ npm install --save koa-combo-static
 }
 ```
 
-* `dfttransform`:[`Array`] 允许使用的转换流 (Default:`["less","sass","stylus","nunjucks","dot","arttemplate","dust"]`), 模块内部默认会使用Uglify、CSSMini、HTMLMini这三个转换流
+* `allowTransform`:[`Array`] 允许使用的转换流 (Default:`["less","scss","stylus","dot","nunjucks","art-template","ejs","hbs","pug","dot_js","njk_js","art_js"，"ejs_js","hbs_js","pug_js"]`), 模块内部默认会使用Uglify、CSSMini、HTMLMini这三个转换流
 
 1. API
 
-**transform(ext,transformName,transformOptions,transformFactory)**
+**transform(options)**
 自定义转换流
 
+options:
+
 * `ext`: [`String`] 文件后缀名(含".") **Required**
-* `transformName`: [`String`] 转换流内部定义名称或自定义名称 **Required**
-* `transformOptions`: [`Object`] 转换流配置项 *Optional*
-* `transformFactory`: [`Function`] 转换流构建工厂 *Optional*
+* `name`: [`String`] 转换流内部定义名称或自定义名称 **Required**
+* `opts`: [`Object`] 转换流配置项 *Optional*
+* `factory`: [`Function`] 转换流构建工厂 *Optional*
+* `context`: [`Hash`] 模板所需的上下文 *Optional*
 
 **hooks(prefixName,options)**
 自定义路径钩子处理
@@ -91,13 +87,24 @@ let kcombo = require('koa-combo-static')
 kcombo(/*options*/)
 
     //使用koa-combo-static内部已提供的转换流
-    .transform('.less','less',{/*options*/})
+    .transform({
+        ext:'.less',
+        name:'less',
+        opts:{/*options*/}
+    })
 
     //自定义新的转换流
-    .transform('.less','less',{/*options*/},function factory(opts){
-        //Note: opts参数 === 方法中的第三个参数
-        /*return a transform Stream engine*/
-    })
+    .transform(
+        {
+            ext:'.less',
+            name:'less',
+            opts:{/*options*/},
+            factory:function factory(opts){
+            //Note: opts参数 === 方法中的第三个参数
+            /*return a transform Stream engine*/
+            }
+        }
+    )
 ```
 
 1. 内部支持的 `Transform`
@@ -125,101 +132,21 @@ Note:
 - [Sass-Complie](#sass-complie)
 - [Stylus-Complie](#stylus-complie)
 
-1. 模板引擎处理的转换流
+1. 模板的预编译转换流
+- [Nunjucks-Precomplie](#nunjucks-precomplie)
+- [Dot-Precomplie](#dot-precomplie)
+- [ArtTemplate-Precomplie](#arttemplate-precomplie)
+- [Ejs-Precomplie](#ejs-precomplie)
+- [Pug-Precomplie](#pug-precomplie)
+- [Hbs-Precomplie](#handlebars-precomplie)
+
+1. 模板的html呈现转换流
 - [Nunjucks-Complie](#Nunjucks-complie)
 - [Dot-Complie](#dot-complie)
 - [ArtTemplate-Complie](#arttemplate-complie)
-
-### Uglify-Complie
-
-· 依赖
-
-```sh
-npm i --save uglify-js
-```
-
-· 作用 : 将js文件流内容执行压缩
-
-### CSSMini-Complie
-
-· 依赖
-
-```sh
-npm i --save clean-css
-```
-
-· 作用 : 将css文件流内容执行压缩
-
-### HTMLMini-Complie
-
-· 依赖
-
-```sh
-npm i --save html-minifier
-```
-
-· 作用 : 将模板文件流内容执行压缩
-
-
-### Less-Complie
-
-· 依赖
-
-```sh
-npm i --save less
-```
-
-· 作用 : 将.less文件流内容编译成纯css内容
-
-### Sass-Complie
-
-· 依赖
-
-```sh
-npm i --save node-sass
-```
-
-· 作用 : 将.scss文件流内容编译成纯css内容
-
-### Stylus-Complie
-
-· 依赖
-
-```sh
-npm i --save stylus
-```
-
-· 作用 : 将.styl文件流内容编译成纯css内容
-
-### Nunjucks-Complie
-
-· 依赖
-
-```sh
-npm i --save nunjucks
-```
-
-· 作用 : 将.html或.njk文件流内容编译成纯HTML内容
-
-### Dot-Complie
-
-· 依赖
-
-```sh
-npm i --save dot
-```
-
-· 作用 : 将.dot文件流内容编译成纯HTML内容
-
-### ArtTemplate-Complie
-
-· 依赖
-
-```sh
-npm i --save art-template
-```
-
-· 作用 : 将.tpl文件流内容编译成纯HTML内容
+- [Ejs-Compile](#ejs-compile)
+- [Pug-Compile](#pug-compile)
+- [Hbs-Compile](#handlebars-compile)
 
 ## Hooks
 
