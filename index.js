@@ -7,6 +7,7 @@ const RDLMap = require('./lib/readline-cachemap')
 const Combo = require('./lib/combo')
 
 const defaultOptions = {
+    debug: false,
     root: process.cwd(),
     prefixOfStatic: ['js', 'css', 'imgs', 'fonts', 'videos'],
     prefix: ['combo_js', 'combo_css', 'combo_tpl'],
@@ -132,13 +133,18 @@ module.exports = function (options) {
 
     wrp.middleware = function () {
 
-        let rdlmap = RDLMap.init({
-            filepath: path.join(process.cwd(), 'combo_cache.txt')
-        })
+        let rdlmap
 
-        rdlmap.on('loaded', data => {
-            combo.__cache = data
-        })
+        if (!options.debug) {
+
+            rdlmap = RDLMap.init({
+                filepath: path.join(process.cwd(), 'combo_cache.txt')
+            })
+
+            rdlmap.on('loaded', data => {
+                combo.__cache = data
+            })
+        }
 
         return async(ctx, next) => {
 
@@ -167,14 +173,13 @@ module.exports = function (options) {
                 return next()
             }
 
-            if (!combo.__cache) await rdlmap.loadCache()
-
             let waitingComboFilesPath = matchRslt[3].split(',').sort()
+
+            if (!options.debug && !combo.__cache) await rdlmap.loadCache()
 
             if (combo.__cache) {
 
                 //如果本地存在此文件,则直接走静态文件输出逻辑
-
                 fullpath = combo.__cache[waitingComboFilesPath.join(',')]
 
                 if (fullpath) {

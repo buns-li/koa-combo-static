@@ -36,6 +36,7 @@ npm install --save koa-combo-static
 
 1. 配置对象模式
 
+* `debug`: [`Boolean`] 是否是调试模式,如果是调试模式则默认不会启动合并文件持久化、合并文件名称缓存映射操作 (Default:`false`)
 * `root`:[`String`] 文件资源的本地根级目录(绝对路径)
 * `charset`:[`String`] 文件编码格式 (Default: `utf-8`)
 * `gzip`: [`Boolean`] 是否允许启动gzip压缩(Default:`false`)
