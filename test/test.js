@@ -43,26 +43,32 @@ const comboFunc = comboMiddleware({
 
                 if (!domain) {
 
-                    if (ext === '.njk_js') {
-                        return path.join(__dirname, './cmps', filename, 'cmp.njk')
-                    } else if (ext === '.dot_js') {
-                        return path.join(__dirname, './cmps', filename, 'cmp.dot')
-                    } else if (ext === '.art_js') {
-                        return path.join(__dirname, './cmps', filename, 'cmp.art')
-                    } else if (ext === '.pug_js') {
-                        return path.join(__dirname, './cmps', filename, 'cmp.pug')
-                    } else if (ext === '.ejs_js') {
-                        return path.join(__dirname, './cmps', filename, 'cmp.ejs')
-                    } else if (ext === '.hbs_js') {
-                        return path.join(__dirname, './cmps', filename, 'cmp.hbs')
+                    let realExt = ''
+
+                    if (['.njk_js', '.dot_js', '.art_js', '.pug_js', '.ejs_js', '.hbs_js'].includes(ext)) {
+                        realExt = ext.replace('_js', '')
+                    } else {
+                        realExt = ext
                     }
 
-                    return path.join(__dirname, './cmps', filename, 'cmp.js')
+                    filename = filename.replace('(', '').replace(')', '')
+
+                    if (~filename.indexOf('|')) {
+                        filename = filename.split('|')
+                    } else {
+                        filename = [filename]
+                    }
+
+                    let names = []
+
+                    filename.forEach(name => {
+                        names.push(path.join(__dirname, './cmps', name, 'cmp' + realExt))
+                    })
+
+                    return names
                 }
 
-                let realUrl = remoteMap[domain.replace('/', '')]
-
-                return [realUrl + filename + ext, path.join(__dirname, './', domain, filename + ext)]
+                return remoteMap[domain.replace('/', '')] + filename + ext
             }
         }
     }
@@ -134,7 +140,7 @@ describe('combo test', function () {
         })
     })
 
-    it.skip('should response precompile  dot_js function string', done => {
+    it.skip('should response precompile dot_js function string', done => {
         ctx.path = '/combojs'
         ctx.url = '/combojs??test1.js,test2.dot_js'
 
@@ -198,7 +204,7 @@ describe('combo test', function () {
         })
     })
 
-    it('should response precompile hbs_js function string', done => {
+    it.skip('should response precompile hbs_js function string', done => {
 
         ctx.path = '/combojs'
 
@@ -213,5 +219,40 @@ describe('combo test', function () {
                 done()
             }, 1500)
         })
+    })
+
+    it.skip('remote file', done => {
+
+        ctx.path = '/combojs'
+
+        ctx.url = '/combojs??jq.cn/core.js,test1.js'
+
+        comboFunc.middleware()(ctx, next).then(() => {
+
+            ctx.body && ctx.body.pipe(process.stdout)
+
+            //含有远程下载操作最好保证小于2000ms一下的延迟
+            setTimeout(function () {
+                done()
+            }, 1500)
+        })
+
+    })
+
+    it('multiple file', done => {
+        ctx.path = '/combojs'
+
+        ctx.url = '/combojs??(test1|test2).njk_js,(test1|test2).js'
+
+        comboFunc.middleware()(ctx, next).then(() => {
+
+            ctx.body && ctx.body.pipe(process.stdout)
+
+            //含有远程下载操作最好保证小于2000ms一下的延迟
+            setTimeout(function () {
+                done()
+            }, 1500)
+        })
+
     })
 })

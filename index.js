@@ -377,7 +377,7 @@ module.exports = function (options) {
 
                 if ((matchRslt = util.isStatic(ctx.url, options.prefixOfStatic))) {
 
-                    let rslt = await combo._streamOfStatic(path.join(options.root, matchRslt[1], matchRslt[2]), ctx)
+                    let rslt = await combo.staticStream(path.join(options.root, matchRslt[1], matchRslt[2]), ctx)
 
                     if (rslt !== false) {
                         ctx.body = rslt
@@ -399,7 +399,7 @@ module.exports = function (options) {
 
                 if (fullpath) {
 
-                    let rslt = await combo._streamOfStatic(fullpath, ctx)
+                    let rslt = await combo.staticStream(fullpath, ctx)
 
                     if (rslt !== false) {
                         ctx.body = rslt
@@ -408,7 +408,7 @@ module.exports = function (options) {
                 }
             }
 
-            ctx.body = await combo._streamOfCombo(ctx, waitingComboFilesPath)
+            ctx.body = await combo.comboedStream(ctx, waitingComboFilesPath)
         }
     }
 
