@@ -106,7 +106,7 @@ module.exports = function (options) {
             switch (transform) {
                 case 'less':
                     combo.transform({
-                        ext: '.less',
+                        key: '.less',
                         name: 'less',
                         opts: {},
                         factory: require('./lib/Transform/compile-less')
@@ -114,7 +114,7 @@ module.exports = function (options) {
                     break
                 case 'sass':
                     combo.transform({
-                        ext: '.scss',
+                        key: '.scss',
                         name: 'scss',
                         opts: {},
                         factory: require('./lib/Transform/compile-sass')
@@ -122,7 +122,7 @@ module.exports = function (options) {
                     break
                 case 'stylus':
                     combo.transform({
-                        ext: '.styl',
+                        key: '.styl',
                         name: 'stylus',
                         opts: {},
                         factory: require('./lib/Transform/compile-stylus')
@@ -133,7 +133,8 @@ module.exports = function (options) {
                      * `opts` please see <https://mozilla.github.io/nunjucks/api.html#precompile>
                      */
                     combo.transform({
-                        ext: '.njk_js',
+                        key: '.njk_js',
+                        allow: ['.njk', '.nunjucks'],
                         name: 'njk_precompile',
                         opts: {
                             name: options.precompileTplNameFn, //path.basename(filepath, path.extname(filepath)),
@@ -148,7 +149,8 @@ module.exports = function (options) {
                      * `opts` please see <http://olado.github.io/doT/>
                      */
                     combo.transform({
-                        ext: '.dot_js',
+                        key: '.dot_js',
+                        allow: '.dot',
                         name: 'dot_precompile',
                         opts: {
                             evaluate: /\{\{([\s\S]+?(\}?)+)\}\}/g,
@@ -175,7 +177,8 @@ module.exports = function (options) {
                      * `opts` please see <https://aui.github.io/art-template/docs/options.html>
                      */
                     combo.transform({
-                        ext: '.art_js',
+                        key: '.art_js',
+                        allow: ['.art', '.artemplte'],
                         name: 'art_precompile',
                         //详见`ejs`的`options`说明
                         opts: {
@@ -192,7 +195,8 @@ module.exports = function (options) {
                      *  @see <https://github.com/mde/ejs#options>
                      */
                     combo.transform({
-                        ext: '.ejs_js',
+                        key: '.ejs_js',
+                        allow: '.ejs',
                         name: 'less_precompile',
                         //详见`ejs`的`options`说明
                         opts: {
@@ -209,7 +213,8 @@ module.exports = function (options) {
                 case 'jade_js':
                 case 'pug_js':
                     combo.transform({
-                        ext: ['.pug_js', '.jade_js'],
+                        key: ['.pug_js', '.jade_js'],
+                        allow: ['.pug', '.jade'],
                         name: 'pug_precompile',
                         opts: {
                             name: options.precompileTplNameFn,
@@ -222,7 +227,8 @@ module.exports = function (options) {
                     break
                 case 'hbs_js':
                     combo.transform({
-                        ext: '.hbs_js',
+                        key: '.hbs_js',
+                        allow: '.hbs',
                         name: 'hbs_precompile',
                         opts: {
                             name: options.precompileTplNameFn
@@ -232,7 +238,7 @@ module.exports = function (options) {
                     break
                 case 'hbs':
                     combo.transform({
-                        ext: '.hbs',
+                        key: '.hbs',
                         name: 'hbs',
                         opts: {},
                         factory: require('./lib/Transform/compile-hbs')
@@ -243,7 +249,7 @@ module.exports = function (options) {
                      * `opts` please see <http://olado.github.io/doT/>
                      */
                     combo.transform({
-                        ext: '.dit',
+                        key: '.dot',
                         name: 'dot',
                         opts: {},
                         factory: require('./lib/Transform/compile-dot')
@@ -254,7 +260,7 @@ module.exports = function (options) {
                      * `opts` please see <https://mozilla.github.io/nunjucks/api.html#configure>
                      */
                     combo.transform({
-                        ext: '.njk',
+                        key: '.njk',
                         name: 'nunjucks',
                         opts: {
                             autoescape: true,
@@ -271,7 +277,7 @@ module.exports = function (options) {
                      *  @see <https://github.com/mde/ejs#options>
                      */
                     combo.transform({
-                        ext: '.ejs',
+                        key: '.ejs',
                         name: 'ejs',
                         opts: {
                             client: true,
@@ -288,7 +294,7 @@ module.exports = function (options) {
                      * `opts` please see <https://aui.github.io/art-template/docs/options.html>
                      */
                     combo.transform({
-                        ext: '.art',
+                        key: '.art',
                         name: 'artTemplate',
                         opts: {
                             // 是否开启对模板输出语句自动编码功能。为 false 则关闭编码输出功能
@@ -316,7 +322,7 @@ module.exports = function (options) {
                      * `opts` please see <https://github.com/pugjs/pug#options>
                      */
                     combo.transform({
-                        ext: '.pug',
+                        key: '.pug',
                         name: 'pug',
                         opts: {
                             name: options.precompileTplNameFn

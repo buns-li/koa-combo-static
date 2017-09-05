@@ -58,7 +58,7 @@ npm install --save koa-combo-static
 
 options:
 
-* `ext`: [`String`] 文件后缀名(含".") **Required**
+* `key`: [`String`] 转换流的识别标志(自定义文件后缀名形式) **Required**
 * `name`: [`String`] 转换流内部定义名称或自定义名称 **Required**
 * `opts`: [`Object`] 转换流配置项 *Optional*
 * `factory`: [`Function`] 转换流构建工厂 *Optional*
@@ -88,7 +88,7 @@ kcombo(/*options*/)
 
     //使用koa-combo-static内部已提供的转换流
     .transform({
-        ext:'.less',
+        key:'.less',
         name:'less',
         opts:{/*options*/}
     })
@@ -96,7 +96,7 @@ kcombo(/*options*/)
     //自定义新的转换流
     .transform(
         {
-            ext:'.less',
+            key:'.less',
             name:'less',
             opts:{/*options*/},
             factory:function factory(opts){
@@ -208,11 +208,8 @@ kcombo(/*options*/)
                 ext: 文件后缀(带'.'号)
                 domain:域名
         */
-        realpath:(filename,ext,domain)=>{
-            //Note:如果在全局配置中设置了'remoteCache'的话,那么这个时候还应该要返回一个本地缓存的文件地址
-            // return [/*real remote path*/,/**/]
-            //Note: remoteCache:false的时候
-            // return /*real remote path*/ || [/*real remote path*/] ||  [/*real remote path*/,null]
+        realpath:(filename,ext,domain,remoteMap)=>{
+            //文件地址：字符串或者数组
         }
     })
 ```
